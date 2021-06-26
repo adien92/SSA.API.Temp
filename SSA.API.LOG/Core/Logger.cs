@@ -12,7 +12,7 @@ namespace SSA.API.LOG.Core
     {
         private static readonly object _lock = new object();
         private SSA.API.LOG.Core.Queue.LoggerQueue<string> abc;
-        private int maxQueueCount = 500;
+        private int maxQueueCount = 50;
         private static Logger _instance;
         public Logger()
         {
@@ -41,21 +41,7 @@ namespace SSA.API.LOG.Core
             var count = abc.Count;
             if (isTodo)
             {
-                //File.AppendAllLines("D:\\text.txt", list);
-                //执行要操作的东西
-                var str = DateTime.Now.ToString("yyyyMMddhhmmss");
-                for (int i = 0; i < count; i++)
-                {
-                    //执行弹出;
-                    var de = abc.Dequeue();
-                    if (de == null)
-                    {
-                        new NlogHelper().Error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                        continue;
-                    }
-                    new NlogHelper().Info(de.ToString() + "|" + str);
-                }
-
+                DoAllQueue();
             }
             if (count >= maxQueueCount)
             {               
@@ -67,7 +53,7 @@ namespace SSA.API.LOG.Core
                     if (de == null)
                     {
                         new NlogHelper().Error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                        continue;
+                        break;
                     }
                     new NlogHelper().Info(de.ToString() + "|" + str);
                 }
@@ -77,6 +63,24 @@ namespace SSA.API.LOG.Core
 
         }
 
-       
+        public void DoAllQueue()
+        {
+            //File.AppendAllLines("D:\\text.txt", list);
+            //执行要操作的东西
+            var str = DateTime.Now.ToString("yyyyMMddhhmmss");
+            var count = abc.Count;
+            for (int i = 0; i < count; i++)
+            {
+                //执行弹出;
+                var de = abc.Dequeue();
+                if (de == null)
+                {
+                    new NlogHelper().Error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    break;
+                }
+                new NlogHelper().Info(de.ToString() + "|" + str);
+            }
+        }
+
     }
 }
