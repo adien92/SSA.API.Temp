@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using SSA.API.LOG.Filter;
+using System.Web.Http;
 
 namespace SSA.API.LOG.Controllers
 {
@@ -22,6 +23,7 @@ namespace SSA.API.LOG.Controllers
         /// </summary>
         /// <param name="logReq">Models.Request.LogReq 对象</param>
         /// <returns></returns>
+        [WebApiAuthorize]
         [HttpPost]
         public Models.Reponse.Res<string> Post(Models.Request.LogReq logReq)
         {
