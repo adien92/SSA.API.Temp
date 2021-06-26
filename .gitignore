@@ -14,3 +14,5 @@
 /SSA.API.LOG/bin
 /SSA.API.LOG/obj/Debug
 /SSA.API.LOG/ProjectLogs
+/SSA.API.Repository/bin/Debug
+/SSA.API.Repository/obj/Debug

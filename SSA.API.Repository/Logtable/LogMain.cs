@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SSA.API.LOG.Models.Request
+namespace SSA.API.Repository.Logtable
 {
     /// <summary>
     /// 日志请求接口
     /// </summary>
-    public class LogReq :Req
+    public class LogMain
     {
+        /// <summary>
+        /// 主键
+        /// </summary>
+        [SqlSugar.SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
+        public int Id { get; set; }
         /// <summary>
         /// 请求方 IP
         /// </summary>
@@ -29,7 +35,7 @@ namespace SSA.API.LOG.Models.Request
         /// <summary>
         /// 日志保存时间
         /// </summary>
-        public DateTime Createtime { get; set; } 
+        public DateTime Createtime { get; set; }
         /// <summary>
         /// 日志等级名称
         /// </summary>

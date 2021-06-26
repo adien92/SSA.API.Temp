@@ -8,6 +8,9 @@ using System.Web;
 
 namespace SSA.API.LOG.Core
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Logger
     {
         private static readonly object _lock = new object();
@@ -16,11 +19,18 @@ namespace SSA.API.LOG.Core
             ? 50 
             : int.Parse(System.Configuration.ConfigurationManager.AppSettings["logQueueMaxCount"]);
         private static Logger _instance;
+        /// <summary>
+        /// 
+        /// </summary>
         public Logger()
         {
             _logger = new SSA.API.LOG.Core.Queue.LoggerQueue<string>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static Logger GetInstance()
         {
             if (_instance != null)
@@ -55,15 +65,21 @@ namespace SSA.API.LOG.Core
                 }
                 if (count >= maxQueueCount)
                 {
+                    List<SSA.API.Repository.Logtable.LogMain> list = new List<Repository.Logtable.LogMain>();
                     for (int i = 0; i < maxQueueCount; i++)
                     {
                         var de = _logger.Dequeue();
                         if (de == null)
                         {
                             break;
-                        }
+                        } 
                         new NlogHelper().Info(de.ToString());
+                        //de 序列化成对象
+                        var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SSA.API.Repository.Logtable.LogMain>(de);
+                        obj.Createtime = DateTime.Now;
+                        list.Add(obj);                        
                     }
+                    new SSA.API.Repository.LogService.LogmainService().Add(list.ToArray());
                 }
             }
             catch (Exception ex)
@@ -79,6 +95,7 @@ namespace SSA.API.LOG.Core
         {
             try
             {
+                List<SSA.API.Repository.Logtable.LogMain> list = new List<Repository.Logtable.LogMain>();
                 var count = _logger.Count;
                 for (int i = 0; i < count; i++)
                 {
@@ -89,7 +106,11 @@ namespace SSA.API.LOG.Core
                         break;
                     }
                     new NlogHelper().Info(de.ToString());
+                    //de 序列化成对象
+                    var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SSA.API.Repository.Logtable.LogMain>(de);
+                    list.Add(obj);
                 }
+                new SSA.API.Repository.LogService.LogmainService().Add(list.ToArray());
             }
             catch (Exception ex)
             {
