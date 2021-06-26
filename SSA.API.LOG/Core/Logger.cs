@@ -73,7 +73,7 @@ namespace SSA.API.LOG.Core
                         {
                             break;
                         } 
-                        new NlogHelper().Info(de.ToString());
+                        NlogHelper.Info(de.ToString());
                         //de 序列化成对象
                         var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SSA.API.Repository.Logtable.LogMain>(de);
                         obj.Createtime = DateTime.Now;
@@ -84,7 +84,7 @@ namespace SSA.API.LOG.Core
             }
             catch (Exception ex)
             {
-                new NlogHelper().Error(string.Format("Write|{0}|{1}", str, isTodo.ToString()), ex);
+                NlogHelper.Error(string.Format("Write|{0}|{1}", str, isTodo.ToString()), ex);
             }
         }
 
@@ -105,7 +105,7 @@ namespace SSA.API.LOG.Core
                     {
                         break;
                     }
-                    new NlogHelper().Info(de.ToString());
+                    NlogHelper.Info(de.ToString());
                     //de 序列化成对象
                     var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SSA.API.Repository.Logtable.LogMain>(de);
                     list.Add(obj);
@@ -114,7 +114,7 @@ namespace SSA.API.LOG.Core
             }
             catch (Exception ex)
             {
-                new NlogHelper().Error(string.Format("DoAllQueue"), ex);
+                NlogHelper.Error(string.Format("DoAllQueue"), ex);
             }
         }
     }

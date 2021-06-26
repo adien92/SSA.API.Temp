@@ -14,7 +14,9 @@ namespace SSA.API.LOG.Jwt
     /// </summary>
     public static class JwtHelper
     {
-        const string secretKey = "Hello World";//口令加密秘钥
+        private readonly static string secretKey = System.Configuration.ConfigurationManager.AppSettings["secretKey"] == null
+            ? "Hello World"
+            :System.Configuration.ConfigurationManager.AppSettings["secretKey"].ToString();//口令加密秘钥
 
         /// <summary>
         /// 创建TOKEN

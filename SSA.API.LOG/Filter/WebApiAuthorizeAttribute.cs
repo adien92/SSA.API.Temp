@@ -25,7 +25,7 @@ namespace SSA.API.LOG.Filter
         /// <returns></returns>
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
-            new Common.NlogHelper().Info(Newtonsoft.Json.JsonConvert.SerializeObject(actionContext.Request.Headers));
+            Common.NlogHelper.Info(Newtonsoft.Json.JsonConvert.SerializeObject(actionContext.Request.Headers));           
             //前端请求api时会将token存放在名为"auth"的请求头中
             var authHeader = from t in actionContext.Request.Headers where t.Key == "Authorization" select t.Value.FirstOrDefault();
             if (authHeader != null)
@@ -51,7 +51,7 @@ namespace SSA.API.LOG.Filter
                     }
                     catch (Exception ex)
                     {
-                        new Common.NlogHelper().Error(token, ex);
+                        Common.NlogHelper.Error(token, ex);
                         return false;
                     }
                 }
