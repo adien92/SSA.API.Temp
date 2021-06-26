@@ -1,38 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+﻿using System.Web.Http;
 
 namespace SSA.API.LOG.Controllers
 {
+    /// <summary>
+    /// 日志服务
+    /// </summary>
     public class LoggerController : ApiController
     {
-        private readonly SSA.API.LOG.Core.Logger _instince;
+        private readonly Core.Logger _instince;
 
+        /// <summary>
+        /// 构造
+        /// </summary>
         public LoggerController()
         {
-            _instince = SSA.API.LOG.Core.Logger.GetInstance();
+            _instince = Core.Logger.GetInstance();
         }
+
+        /// <summary>
+        /// 接收参数信息
+        /// </summary>
+        /// <param name="logReq">Models.Request.LogReq 对象</param>
+        /// <returns></returns>
         [HttpPost]
-        public void Post(Models.Request.LogReq logReq)
-        {            
+        public Models.Reponse.Res<string> Post(Models.Request.LogReq logReq)
+        {
             System.Threading.Tasks.Task.Factory.StartNew(() =>
-            {           
-                //for (int i = 0; i < 1000; i++)
-                //{
-                //    //new SSA.API.LOG.Core.Queue.LoggerQueue<int>().Enqueue(i);
-                //    instince.Write(i.ToString() + "||" + DateTime.Now.Year);
-                //}
+            {
                 var logstr = Newtonsoft.Json.JsonConvert.SerializeObject(logReq);
-                _instince.Write(logstr);
+                _instince.Write(logstr, logReq.IsTodo);
             });
+            return Models.Reponse.Res<string>.Success("Post Done");
         }
+
+        /// <summary>
+        /// 立即执行队列内容
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public void DoAllQueue()
-        {            
-            _instince.DoAllQueue();
+        public Models.Reponse.Res<string> DoAllQueue()
+        {
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            {
+                _instince.DoAllQueue();
+            });
+            return Models.Reponse.Res<string>.Success("DoAllQueue Done");
+
         }
     }
 }

@@ -11,12 +11,14 @@ namespace SSA.API.LOG.Core
     public class Logger
     {
         private static readonly object _lock = new object();
-        private SSA.API.LOG.Core.Queue.LoggerQueue<string> abc;
-        private int maxQueueCount = 50;
+        private LoggerQueue<string> _logger;
+        private int maxQueueCount = System.Configuration.ConfigurationManager.AppSettings["logQueueMaxCount"] == null 
+            ? 50 
+            : int.Parse(System.Configuration.ConfigurationManager.AppSettings["logQueueMaxCount"]);
         private static Logger _instance;
         public Logger()
         {
-            abc = new SSA.API.LOG.Core.Queue.LoggerQueue<string>();
+            _logger = new SSA.API.LOG.Core.Queue.LoggerQueue<string>();
         }
 
         public static Logger GetInstance()
@@ -35,52 +37,64 @@ namespace SSA.API.LOG.Core
             }
             return _instance;
         }
-        public void Write(string j, bool isTodo = false)
+
+        /// <summary>
+        /// 执行写入队列并控制按量存入系统
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="isTodo"></param>
+        public void Write(string str, bool isTodo = false)
         {
-            abc.Enqueue(j);
-            var count = abc.Count;
-            if (isTodo)
+            try
             {
-                DoAllQueue();
-            }
-            if (count >= maxQueueCount)
-            {               
-                var str = DateTime.Now.ToString("yyyyMMddhhmmss");
-                for (int i = 0; i < maxQueueCount; i++)
-                {                 
-                    //执行弹出;
-                    var de = abc.Dequeue();
-                    if (de == null)
-                    {
-                        new NlogHelper().Error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                        break;
-                    }
-                    new NlogHelper().Info(de.ToString() + "|" + str);
+                _logger.Enqueue(str);
+                var count = _logger.Count;
+                if (isTodo)
+                {
+                    DoAllQueue();
                 }
-              
-
-            }            
-
+                if (count >= maxQueueCount)
+                {
+                    for (int i = 0; i < maxQueueCount; i++)
+                    {
+                        var de = _logger.Dequeue();
+                        if (de == null)
+                        {
+                            break;
+                        }
+                        new NlogHelper().Info(de.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                new NlogHelper().Error(string.Format("Write|{0}|{1}", str, isTodo.ToString()), ex);
+            }
         }
 
+        /// <summary>
+        /// 执行所有队列
+        /// </summary>
         public void DoAllQueue()
         {
-            //File.AppendAllLines("D:\\text.txt", list);
-            //执行要操作的东西
-            var str = DateTime.Now.ToString("yyyyMMddhhmmss");
-            var count = abc.Count;
-            for (int i = 0; i < count; i++)
+            try
             {
-                //执行弹出;
-                var de = abc.Dequeue();
-                if (de == null)
+                var count = _logger.Count;
+                for (int i = 0; i < count; i++)
                 {
-                    new NlogHelper().Error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    break;
+                    //执行弹出;
+                    var de = _logger.Dequeue();
+                    if (de == null)
+                    {
+                        break;
+                    }
+                    new NlogHelper().Info(de.ToString());
                 }
-                new NlogHelper().Info(de.ToString() + "|" + str);
+            }
+            catch (Exception ex)
+            {
+                new NlogHelper().Error(string.Format("DoAllQueue"), ex);
             }
         }
-
     }
 }
