@@ -3,3 +3,14 @@
 ################################################################################
 
 /packages
+/.vs/SSA.API
+/SSA.API.Common/bin/Debug
+/SSA.API.Common/obj/Debug
+/SSA.API.ConsoleApp/bin/Debug
+/SSA.API.ConsoleApp/obj/Debug
+/SSA.API.UnitTestProject/bin/Debug
+/SSA.API.UnitTestProject/obj/Debug
+/SSA.API.LOG/archives
+/SSA.API.LOG/bin
+/SSA.API.LOG/obj/Debug
+/SSA.API.LOG/ProjectLogs
